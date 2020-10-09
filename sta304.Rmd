@@ -1,0 +1,343 @@
+---
+title: "Main factors of voting Liberal Party of Canada"
+author: "Fang Jia, Anan Jiang, Yilin Wang,Yao Xiao"
+date: "10/7/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Author
+Fang Jia
+Anan Jiang
+Yilin Wang
+Yao Xiao
+
+## Abstract
+
+Voters play important roles in voting for different Parties in Canadian Elections. In this paper, we use the latest survey's data from our company Petit Poll to explore if gender, age group, sexuality and economic class of income will lead voters to vote Liberal Party of Canada overall elections. We find that females, elderly groups and middle class groups play important roles in voting for Liberal Party while sexuality doesn't. We believe these findings will help the Liberal Party to get more supports in the next election.
+
+## Introudction
+
+Petit Poll is a Canadian polling company who has a contract with Liberal Party to provide them with monthly polling updates. In this paper, we will take a look at the polling data from the survey about age, gender, sexuality and income of voters who voted for Liberal Party. The purpose for this is to explore if those factors will mainly affect the results of voting the Liberal Party. After all, our company hope the Liberal Party can get more supports by finding out what they could focus on and what they could improve. So we observe that women, over 61 ages group and middle class with household income 30,001-11,001 are three main groups who voted for the Liberal Party.
+
+For this analysis, we use the results of the latest survey from Petit Poll. There are four questions in this survey which ask your gender, sexuality, income and age group. We make them become 4 variables for analysis. The survey's sample size is 5000 which means there are 5000 respondents in total. To make the observation more clear and easier to analyze, we make a data frame with four columns of variables and plot these variables into 4 graphs. Since the survey has already grouped the ages and income into 5 small groups each, we don't need to group the data in graphs again. Each graph shows a variable from gender, income, age and sexuality in x-axis and total count of 5000 in y-axis. The graph of age groups and income groups include numerical data, so we use histograms to plot them. The rest graphs include categorical data, so we use barplot to plot them. You'll find the distribution of each graph clearly and easy to understand. You will also find a detail survey methodology that we used to design our survey in this paper.
+
+This analysis is limited to the data available from the online survey by Petit Poll in this month because the company updates the data monthly. If it is possible to compare these data with the data posted in future, the analysis will be more accurate. Also, there will be some respondents with bias due to individual reasons. For example, perhaps some respondents are not willing to tell us real income so they will choose unreal answers corresponding to the question. These results may lead data bias. The one thing we can improve is to enlarge our sample size to reduce the respondents error and the data bias in future.
+
+
+
+
+
+## Survey methodology
+
+Here is the detail about the survey made by Our company.
+The target population for this survey is all Canadian citizens vote for liberal political party in the overall election. The frame for this survey is the list of all Canadian citizens vote for liberal political party in the overall election and registered at Election Canada office. Canadian citizens who registered at Election Canada office will be recorded. We can find the list of all Canadian citizens who vote for liberal political party in the overall election from Election Canada office. We choose 5000 Canadian citizens in this list as sample.
+
+We will use simple random sampling with replacement. By selecting 5000 sample from whole population, it is more easier to analyze a smaller sample size from a larger population. Each unit have equal chance to be selected from population. 
+
+About methods of survey, we choose online surveys to receive different groups of respondents as complete as possible. The advantages of this method is economical and convenient. For the online survey. We've made 4 brief multiple choice questions on the surveymonkey website. Online survey can increase response rate easily because most people prefer providing honest answers about the sensitive topics online. Also, it's easy to finish the survey. You just need to click the mouth.
+
+For the online survey by surveymonkey website, the total cost will be $32,200. The price per response is $6.44 and the sample size is limited to 5000. So the total price for this survey is $32,200. (reference: “surveymonkey website”)
+
+When designing the survey, we will keep it short and simple. For instance, we decided to set the choices for each question short and clear for narrowing down the range for household income or age. Meanwhile, we inform that we value the privacy for respondents. Non-response may reduce the sample size which will lead to wrong conclusions. However, the accuracy of the estimator will be small due to smaller sample size. To prevent that, we could enlarge the sample size to eliminate this effect in advance.If a particular group is under or over-represented in the survey due to non-response, the results may be not fair. For instance, if the group of respondents whose occupation lawyers refuse to respond, it will lead to biases in the estimates. To prevent this situation, we have to guarantee the diversity of samples.
+
+To protect respondent privacy, firstly we keep the survey anonymous. The information when submitting the questionnaire( the IP address for logging in, time for submitting, resources), also the data selected by the questionnaire will bot be shared by the third party. All information will be used for survey purpose. We will notice the respondents that we do not have the right to use their data for other uses except for survey. Secondly, there is no obligation for respondents to provide personal in-formation. We do not have any mandatory personal questions or pressure for collecting privacy information in the questionnaire. There will be no revealing or sensitive questions when we set the survey. Most importantly, respondents have the rights to decide whether to provide their information, we will inform them at the beginning of the survey to ensure they feel more trustworthy for us. Thirdly, we allow respondents keep the right to achieve their response after the survey is submitted. They have rights to change their answers at any time and we respect their rights to withdraw their submission at any time.
+
+
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+# install cesR package
+devtools::install_github("hodgettsp/cesR")
+
+# load cesR package
+library(cesR)
+
+# Print a dataset of the CES survey codes and their associated calls.
+get_cescodes()
+
+
+# load labelled package
+library(labelled)
+
+# call 2019 CES online survey
+get_ces("ces2019_web")
+
+get_decon()
+
+# convert values to factor type
+ces2019_web <- to_factor(ces2019_web)
+
+```
+
+
+```{r, warning=FALSE, message=FALSE, include=FALSE}
+# load dplyr package
+library(dplyr)
+# remove all the missing value in gender and vote choice
+my_data <- ces2019_web[!is.na(ces2019_web$cps19_gender) & !is.na(ces2019_web$cps19_votechoice),]
+# find the proportion of voters who is female and vote for liberal party
+female <- sum(my_data$cps19_gender=='A woman'& my_data$cps19_votechoice == "Liberal Party") / 31564
+female
+# find the proportion of voters who is male and vote for liberal party
+male <- sum(my_data$cps19_gender=='A man' & my_data$cps19_votechoice == "Liberal Party") / 31564
+male
+# using above proportion of female and male to simulate whether 5000 people is female and male or not
+set.seed(6138)
+gender_count <- sample(1:2,5000,replace=TRUE, prob = c(female,male))
+
+# remove all the missing value in age and vote choice
+age <- ces2019_web[!is.na(ces2019_web$cps19_age) & !is.na(ces2019_web$cps19_votechoice),] 
+# find the proportion of voters who is between 18-30 years old and vote for liberal party
+age18_30 <- sum(18< age$cps19_age & age$cps19_age < 30 & age$cps19_votechoice  == "Liberal Party") / 31564
+age18_30
+# find the proportion of voters who is between 31-40 years old and vote for liberal party
+age31_40 <- sum(31< age$cps19_age & age$cps19_age < 40 & age$cps19_votechoice  == "Liberal Party") / 31564
+age31_40
+# find the proportion of voters who is between 41-50 years old and vote for liberal party
+age41_50 <- sum(41< age$cps19_age & age$cps19_age < 50 & age$cps19_votechoice  == "Liberal Party") / 31564
+age41_50
+# find the proportion of voters who is between 51-60 years old and vote for liberal party
+age51_60 <- sum(51< age$cps19_age & age$cps19_age < 60 & age$cps19_votechoice  == "Liberal Party") / 31564
+age51_60
+# find the proportion of voters who is over 61 years old and vote for liberal party
+over61   <- sum(61< age$cps19_age  & age$cps19_votechoice  == "Liberal Party") / 31564
+over61
+# using above five proportions of different age period to simulate which age period does 5000 people belong 
+set.seed(6138)
+age_count <- (sample(1:5,5000,replace=TRUE, prob = c(age18_30,age31_40,age41_50, age51_60,over61)))
+
+
+
+# load labelled package
+library(labelled)
+
+
+
+# create a dataframe with income and vote choice
+a <- select(ces2019_web,cps19_votechoice)
+b <- select(decon,income)
+total <- data.frame(a,b)
+
+# remove all the missing value in income and vote choice
+income_data <- total[!is.na(total$income)& !is.na(total$cps19_votechoice),]
+# find the proportion of voters whose income is less than 30000 and vote for liberal party
+Under_30000 <- sum(income_data$income < 30000 & income_data$cps19_votechoice == "Liberal Party") / 21762
+Under_30000
+# find the proportion of voters whose income is between 30001 and 70000 and vote for liberal party
+less_70000 <- sum(30001 < income_data$income & income_data$income < 70000 & income_data$cps19_votechoice == "Liberal Party") / 21762
+less_70000
+# find the proportion of voters whose income is between 70001 and 110000 and vote for liberal party
+less_110000 <- sum(70001 < income_data$income & income_data$income < 110000 &income_data$cps19_votechoice == "Liberal Party") / 21762
+less_110000
+# find the proportion of voters whose income is between 110001 and 150000 and vote for liberal party
+less_150000 <- sum(110001 < income_data$income & income_data$income < 150000 &income_data$cps19_votechoice == "Liberal Party") / 21762
+less_150000
+# find the proportion of voters whose income is over 150001 and vote for liberal party
+over_150001 <- sum(income_data$income > 150000&income_data$cps19_votechoice == "Liberal Party") / 21762
+over_150001
+# using above five proportions of different income range to simulate which income range does 5000 people belong 
+set.seed(6138)
+income_count <- ((sample(1:5,5000,replace=TRUE, prob = c(Under_30000,less_70000,less_110000,less_150000,over_150001))))
+
+# create a dataframe with sexuality choice and vote choice
+c <- select(ces2019_web,cps19_votechoice)
+d <- select(decon,sexuality_selected)
+new_data <- data.frame(c,d)
+# remove all the missing value in sexuality choice and vote choice
+sexuality_data <- new_data[!is.na(new_data$sexuality_selected) & !is.na(new_data$cps19_votechoice),]
+# find the proportion of voters who is heterosexual and vote for liberal party
+sexuality <- sum(sexuality_data$sexuality_selected=='Heterosexual'& sexuality_data$cps19_votechoice == "Liberal Party") / 31564
+sexuality
+# find the proportion of voters who is bisexual and vote for liberal party
+other_sexuality <- sum(sexuality_data$sexuality_selected=='Bisexual'& sexuality_data$cps19_votechoice == "Liberal Party") / 31564
+other_sexuality
+# find the proportion of voters who choose prefer not to say and vote for liberal party
+third_sexuality <- sum(sexuality_data$sexuality_selected=='Prefer not to say'& sexuality_data$cps19_votechoice == "Liberal Party") / 31564
+third_sexuality
+# using above three proportions of different sexuality choice to simulate which sexuality does 5000 people belong 
+set.seed(6138)
+sexuality_count <- sample(1:3,5000,replace=TRUE, prob = c(sexuality,other_sexuality,third_sexuality))
+```
+
+## Data information
+
+The following dataframe has 4 columns and 5000 rows inside. Each row represents a particular respondent who answer the survey questions. There are 5,000 respondents in total. Each column represents a variable from the survey questions. We have 4 variables for exploration. They are household income class group, gender, age group and sexuality. You can see a list of numbers in each column. Each number represents a respondent's choice corresponding to the question. Also, the order of numbers in each column represents the order of choice from each survey questions. For example, the number 5 in age_count column means the respondent choose the fifth choice of age group, which is over 61. We will use data in this frame to draw 4 graphs to analysis more obviously.
+
+```{r ,echo=FALSE}
+# create a dataframe with above income/age/income/gender simulations
+all_data <- data.frame(income_count,age_count,sexuality_count,gender_count)
+# then remove the count of each simulations 
+all_data$Freq<-NULL
+head(all_data)
+```
+
+
+```{r ,echo=FALSE}
+# create a table with how many people choose each age range, 1 represents age between 18 to 30 ,2 represents age between 31 to 40 ,3 represents age between 41 to 50,4 represents age between 51 to 60, 5 represents age over 61
+
+set.seed(6138)
+age_count_1 <- table(sample(0:4,5000,replace=TRUE, prob = c(age18_30,age31_40,age41_50, age51_60,over61)))
+age_count_1
+```
+
+```{r,echo=FALSE}
+# create a histogram with count of different age range among 5000 people 
+library(ggplot2)
+graph_1<- ggplot(data = all_data, aes(x = age_count)) + 
+  geom_histogram(colour="black",fill="steelblue",binwidth = 0.5) +
+  labs(x="Age Group", y="Amount of Voters", title = "Figure 1: Distribution of voters with their ages", caption = "Source: Stephenson, Harell, Rubenson, Loewen(2020)", subtitle = "ages are grouped by 18-30, 31-40, 41-50, 51-60, over 61")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+graph_1
+```
+# Graph Discussion of Figure 1
+The figure 1 represents the data collected from first survey questions "What is your age". For the first question in survey, we collected the age range of the people that participated in this survey who vote for Liberal Party, and then, we simulated the data to get a histogram to display the result clearer. From the generated plot, it is obvious that the graph is left-skewed. There is no big difference in the number of people in the age range of 18-60. However, a lot of elder people who are over 61 voted for the Liberal party, accounting for 1766. From the data, we can see that some young people voted for the Liberal Party and it might be due to the policies that the candidate of Liberal Party has made. For example, the Liberal government has promised to increase Canada Students Grants by 40 percent and students do not need to pay back. Also, for those people who are in middle-aged group, the Liberal party also provides Career Insurance Benefit to those workers who are in transition time and hard to find new jobs. Last but not the least, the political party also pay attention to those elders and has made effective policies in term of pension insurance, and it might be the reason for those elders to vote for them.  All these aspects prompt citizens to vote for the Liberal party.
+
+```{r,echo=FALSE}
+# create a table with how many people choose each income range, 1 represents income under 30000, 2 represents income between 30001 and 70000,3 represents income between 70001 and 110000,4 represents income between 110001 and 150000, 5 represents income over 150001,
+set.seed(6138)
+income_count_1 <- table((sample(1:5,5000,replace=TRUE, prob = c(Under_30000,less_70000,less_110000,less_150000,over_150001))))
+income_count_1
+```
+
+```{r,echo=FALSE}
+# create a histogram with count of different income range among 5000 people 
+library(ggplot2)
+graph_2 <- ggplot(data = all_data, aes(x = income_count)) + 
+  geom_histogram(binwidth=0.5, colour="black",fill="red")+
+  labs(x="Household income", y="Amount of Voters", title = "Figure 2: Distribution of voters with their household income", caption = "Source: Stephenson, Harell, Rubenson, Loewen(2020)", subtitle = "grouped by <30,000; 30,001-70,000; 70,001-110,000; 110,001-150,000; >150,001 ")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+graph_2
+```
+
+# Graph Discussion figure 2
+
+To analyze how income would affect the result of the Federal Party Election, we generated a problem about those participants’ income. We plot a histogram to have a clearer view. This histogram is approximately normal with the most people have an average salary of $30,001 to $70,000, accounting for 1526 people, followed by 1523 people who got $70,001 to $110,000 in a year.  Relatively, those people with a higher or lower income took a smaller part. According to the  average Canadian salary income in 2019, the average income for Canadian was $52,600 per year. From the simulated data, we found that those people with relatively middle income prefer to vote for Liberal Party. This might due to the policy that the Party has formulated. For example, Liberal Party decided to raise the tax on the wealthiest people and cut taxes for the middle class. Then, income might be one of the reasons for the participants to make their choices.
+
+
+```{r,echo=FALSE}
+# create a table with how many people choose female or male, 1 represents female, 2 represents male 
+set.seed(6138)
+gender_count_1 <- table(sample(0:1,5000,replace=TRUE, prob = c(female,male)))
+gender_count_1
+```
+
+```{r,echo=FALSE}
+# create a barplot with count of gender choice among 5000 people 
+library(ggplot2)
+graph_3 <- ggplot(data = all_data,aes(x=gender_count))+
+  geom_bar(width = 0.5, colour="blue", fill="blue")+
+  labs(x="Gender", y="Amount of voters",
+       title= "Figure 3: Distribution of voters with their gender",
+       subtitle = "Gender is catogried into female and male",
+       caption="Source: Stephenson, Harell, Rubenson, Loewen(2020)")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+  
+graph_3
+```
+# Graph Discussion figure 3
+
+According to the data we have collected, there are 2905 females and 2095 males who support liberals. Even if it is not necessarily a new phenomenon in this country, the results of recent polls show that Canada and Canadian men and women have significantly different voting intentions.
+In fact, there are big differences between different sexes. Men usually pay more attention to the acquisition of benefits, while women overemphasize human nature to varying degrees.
+In the bipartisan competition, their actual promised returns are similar, so the support rate of men is almost equal. Of course, men choose the Liberal Party because they offer more attractive policies to ordinary people. For example, the most important thing is a tax cut for people with an annual income of less than £147,000. In fact, the Canadian middle class's tax income is too high, but most families, especially Chinese families, earn less than 147,000 pounds. If the Liberal Party cuts taxes for these families, they hope to save a lot every year. There is also a general medical plan. The government implemented the "National Drug Plan" and established the Canadian Drug Administration to improve drug purchase efficiency and reduce drug costs. Such attractive policies have led those who are more interested in their own interests to choose the Liberal Party. Women choose the Liberal Party because they have adopted a series of protection measures for women.
+In this situation, women all over the world are in an inferior position, and Trudeau, the representative of the Liberal Party, has successfully fulfilled his promise to provide more support to survivors of sexual harassment, sexual assault and domestic violence. He promised to develop a comprehensive national strategy to combat gender-based violence, consider gender impact in all government decisions, and launch a national investigation to understand the prevalence of missing and murdered indigenous women and girls. In addition, the rights and interests of the LGBT community in Canada have recently been more comprehensively protected by the Liberal Party, and the new policy has improved the welfare of the elderly and children.
+From my point of view, women are regarded as wise animals, are regarded as closer to the nature of life than men, and are more sensitive to the movement of life. Not only because it protects their interests, but also because the government protects vulnerable groups, women are more likely to be moved. This is why they chose the Liberal Party.
+
+
+
+```{r,,echo=FALSE}
+# create a table with how many people choose among three sexuality choice
+set.seed(6138)
+sexuality_count_1 <- table(sample(0:2,5000,replace=TRUE, prob = c(sexuality,other_sexuality,third_sexuality)))
+sexuality_count_1
+```
+
+```{r,,echo=FALSE}
+# create a barplot with count of different sexuality choice among 5000 people 
+library(ggplot2)
+graph_4 <- ggplot(data = all_data,aes(x=sexuality_count))+
+  geom_bar(width = 0.75, colour="black", fill="orange")+
+  labs(x="sexuality", y="Amount of voters",
+       title= "Figure 4: Distribution of voters with their sexuality",
+       subtitle = "Sexuality is catogried by Heterosexual, Bisexual and Prefer not to say",
+       caption="Source: Stephenson, Harell, Rubenson, Loewen(2020)")+
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
+  
+graph_4
+```
+# Graph Discussion figure 4
+
+We also discuss about whether sexuality can be one of the reasons that make those participants to vote for Liberal party. From the data we simulated, it is obvious that the graph is right-skewed and most of the people are heterosexual, which account for 4655. Then, there are 200 people belong to bisexual and 145 participants prefer not to say. It's a normal result as we can predict because bisexual group only accounts little percentages for the whole sexuality in Canada. Although the Liberal party voted to maintain current policies on same-sex marriage, it seems that this action did not have a big influence in the Federal Party Election.
+
+
+
+## Non technical summary
+According to figure 1, figure 2, figure 3 and figure 4. We can conclude that the gender, class of income and age play important role in voting Liberal Party. Especially the elderly group, female group and middle class group contributes mostly. The reason is based on some politics published by Liberal Party such as cutting taxes for middle class and welfare improvement among women and new childs. However, everything has two sides. If there are groups of people who support Liberal, there will also occur opposite group who have low proportion in voting Liberal Party. For instance, Liberal Party is extremely popular in middle class but earns less support from upper and lower class. When I do research, I find that when the Liberal cuts taxes for middle class, they also increases taxes for upper class. Maybe some people from upper class will think it is not fair for them about the growth of taxes. Some of them also work hard everyday so they do not accept such a "balanced" policy. So I recommend the Liberal Party should consider how to improve the tax policy and make a better deal. They can also think about the welfare among lower class to get more support in the next election. For gender group we discussed in "Figure 3", women support the Liberal with a high percentage due to the liberal has published a lot of welfare policies for their children and themselves. We know women usually focus more on gender equality then men. So obviously, our Liberal Party really done a good job in this part. They have already payed attention on protecting female power. Base on these data, I believe there will still be a lot of women who support Liberal Party in Future. 
+
+
+## Weakness and future step
+
+Participants may not feel encouraged to provide accurate and honest answers
+· Participants may be unwilling to provide answers that do not benefit them.
+· Due to lack of memory of the subject, or even bored, at least one may not completely replace the reason for any answer.
+· The effectiveness of closed question investigations may be lower than other types of questions.
+· There may be data errors due to unresolved problems. The number of substitutes who choose to answer the survey questions may be different from the number of substitutes who choose not to answer, which creates bias.
+· The answer options of the survey question may make the data unclear, because some answer options may be interpreted in different ways by the initiator. For example, the answer option "somewhat agree" may represent different things on different topics, and if "only once" is not available for each, the serializer may answer "no". "Yes" or "No" answers will cause problems.
+· Custom surveys may contain certain types of errors
+1. The depth of those questions may also be a matter of investigation. The survey questions are standardized and easy to understand to help those participants take this survey. It is difficult to ask really deep questions to get a thorough analysis. Therefore, the survey results may not be as effective as we want.
+2. Questions may be inappropriate. Before the problem is managed, the questions in the survey are always standardized. We are required to ask some general questions that are enough to help us get the findings. However, these general questions might not be suitable for all participants.
+3. Almost all the data is simulated and there exists differences between the simulated data and the real data. Then the result of our analysis might also be distinct from the real result. Also, using different methods of simulation may lead to different result.
+A good example of this situation is to conduct a survey of emotional variables or variables involving emotions.
+Design-oriented questionnaire surveys are more difficult. Future-oriented surveys often require understanding the user's intentions, motivations and thought processes. Questions like questionnaires are often ineffective, or it is difficult to design questions. And open-ended issues, recycling quality, analysis and statistics will also be affected. Questionnaire surveys are conducted by users themselves, so the quality of the survey results is often not guaranteed. The response rate of the questionnaire is difficult to guarantee.
+In future, to reduce the errors we mentioned, we will try our best to enlarge the sample size. We will use more survey methodology instead of only online survey so that there will be more different groups of people who can take survey and give us answers. In this way, the respondent bias can be reduced and we can get a more real analysis of data. Also, due to the limitation of data, I think we need to get more updated data in the future so that we can compare difference between these data and get a more accurate result. As we all know, it's not propriate and precise to get an result from only past one month data.
+
+## Appendix
+
+The link of survey:  https://www.surveymonkey.com/r/DJKJXYQ
+
+The screenshot of the survey:
+```{r echo=FALSE, fig.cap="The overall electors vote for Liberal Party"}
+# insert a screenshot of survey questions
+knitr::include_graphics("C:/Users/judia/Pictures/Screenshots/survey1.png")
+knitr::include_graphics("C:/Users/judia/Pictures/Screenshots/survey2.png")
+```
+
+
+
+## References
+
+- A Responsible Fiscal Plan: Our Platform. (n.d.). Retrieved from https://liberal.ca/our-platform/a-responsible-fiscal-plan/
+- Dodge, P. M. (2020, January 08). The Average Canadian Salary in 2019. Retrieved from 
+  https://www.jobillico.com/blog/en/average-canadian-salary/
+- Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2020). dplyr: A Grammar of Data Manipulation. R package
+  version 1.0.2. https://CRAN.R-project.org/package=dplyr
+- Hannahjacksonglobal. (2019, September 30). What are the Liberals promising to students? 3 takeaways from the platform. Retrieved    October 08, 2020, from     
+  https://globalnews.ca/news/5966958/liberal-platform-students/
+- Hadley Wickham, Jim Hester and Winston Chang (2020). devtools: Tools to Make Developing R Packages Easier. R package
+- Help When People Need It Most: Our Platform. (n.d.). Retrieved from https://liberal.ca/our-platform/help-when-people-need-it-most/
+- H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+  version 2.3.2. https://CRAN.R-project.org/package=devtools
+- Joseph Larmarange (2020). labelled: Manipulating Labelled Data. R package version 2.6.0.
+  https://CRAN.R-project.org/package=labelled
+- Paul A. Hodgetts and Rohan Alexander (2020). cesR: Access the CES Datasets a Little Easier.. R package version 0.1.0.
+- Policy Resolution 10: Liberal Party of Canada. (n.d.). Retrieved from        
+  https://liberal.ca/policy-resolutions/10-pensions-age-security-canada-pension-plan/
+- R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL
+  https://www.R-project.org/.
+- Stephenson, Laura B; Harell, Allison; Rubenson, Daniel; Loewen, Peter John, 2020, '2019 Canadian Election Study - Online Survey',    https://doi.org/10.7910/DVN/DUS88V, Harvard 
+  Dataverse, V1
+- Stephenson, Laura, Allison Harrel, Daniel Rubenson and Peter Loewen. Forthcoming. 'Measuring Preferences and Behaviour in the 2019   Canadian Election Study,' Canadian Journal of 
+  Political Science.
+- Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686,
+  https://doi.org/10.21105/joss.01686
+- Yaxley, L. (2018, November 16). 'Groundhog day' as Liberals vote no change on same-sex marriage policy. Retrieved from  
+  https://www.abc.net.au/news/2017-08-07/same-sex-marriage-liberals-vote-keep-policy/8781858
+
+
